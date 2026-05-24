@@ -37,6 +37,11 @@ export interface RemoveMod {
     id: string
 }
 
+export interface ResetMod {
+    type: 'ResetMod',
+    id: string
+}
+
 export interface Import {
     type: 'Import',
     from_path: string
@@ -64,6 +69,7 @@ export type Request = GetModStatus |
     SetModsEnabled | 
     QuickFix | 
     RemoveMod | 
+    ResetMod | 
     Import | 
     ImportUrl | 
     FixPlayerData |

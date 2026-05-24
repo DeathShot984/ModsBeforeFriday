@@ -74,6 +74,20 @@ pub(super) fn handle_remove_mod(id: String) -> Result<Response> {
     })
 }
 
+/// Handles `ResetMod` [Requests](crate::requests::Request).
+/// # Returns
+/// The [Response] to the request (variant `Mods`)  
+pub(super) fn handle_reset_mod(id: String) -> Result<Response> {
+    let res_cache = crate::load_res_cache()?;
+    let mut mod_manager = ModManager::new(super::get_app_version_only()?, &res_cache);
+    mod_manager.load_mods()?;
+    mod_manager.reset_mod(&id)?;
+
+    Ok(Response::Mods {
+        installed_mods: get_mod_models(mod_manager)?,
+    })
+}
+
 /// Consumes a [ModManager] and converts the loaded mods into [ModModels](ModModel) which can be serialized
 /// to JSON and sent back to the frontend.
 pub(super) fn get_mod_models(mut mod_manager: ModManager) -> Result<Vec<ModModel>> {

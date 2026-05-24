@@ -54,6 +54,7 @@ pub fn handle_request(request: Request) -> Result<Response> {
             patching::handle_get_downgraded_manifest(version)
         }
         RequestEnum::RemoveMod { id } => mod_management::handle_remove_mod(id),
+        RequestEnum::ResetMod { id } => mod_management::handle_reset_mod(id),
         RequestEnum::SetModsEnabled { statuses } => mod_management::handle_set_mods_enabled(statuses),
         RequestEnum::Import { from_path } => import::handle_import(from_path, None),
         RequestEnum::ImportUrl { from_url } => import::handle_import_mod_url(from_url),

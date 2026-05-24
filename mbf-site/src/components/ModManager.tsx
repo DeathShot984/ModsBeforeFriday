@@ -6,7 +6,7 @@ import { ModCard } from "./ModCard";
 import UploadIcon from '../icons/upload.svg';
 import ToolsIcon from '../icons/tools-icon.svg';
 import '../css/ModManager.css';
-import { importFile, importUrl, removeMod, setModStatuses } from "../Agent";
+import { importFile, importUrl, removeMod, resetMod, setModStatuses } from "../Agent";
 import { toast } from "react-toastify";
 import { ModRepoBrowser } from "./ModRepoBrowser";
 import { ImportResult, ImportedMod, ModStatus } from "../Messages";
@@ -144,6 +144,19 @@ function InstalledModsMenu(props: ModMenuProps) {
                         setChanges(newChanges);
                     });
 				}}
+
+
+                onReset={async () => {
+                    if (!device) return;
+                    await wrapOperation("Resetting mod", "Failed to reset mod", async () => {
+                        await resetMod(device, mod.id);
+                   });
+                }}
+
+
+
+
+
 				onEnabledChanged={enabled => {
 					const newChanges = { ...changes };
 

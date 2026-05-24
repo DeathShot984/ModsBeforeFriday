@@ -337,6 +337,14 @@ export async function removeMod(device: Adb,
   return (response as Mods).installed_mods;
 }
 
+export async function resetMod(device: Adb,
+  mod_id: string) {
+  let response = await sendRequest(device, {
+      type: 'ResetMod',
+      id: mod_id
+  });
+}
+
 // Instructs the agent to patch the app, adding the modloader and installing the core mods.
 // Updates the ModStatus `beforePatch` to reflect the state of the installation after patching.
 // (will not patch if the APK is already modded - will just extract the modloader and install core mods.)

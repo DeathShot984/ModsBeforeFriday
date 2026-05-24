@@ -327,6 +327,26 @@ impl<'cache> ModManager<'cache> {
         Ok(())
     }
 
+    /// Deletes the config file for the mod with the given ID.
+    ///
+    /// # Arguments
+    /// * `id` - the ID of the mod for which to delete the config file.
+    pub fn reset_mod(&self, id: &str) -> Result<()> {
+    let config_path = format!(
+        "/sdcard/ModData/{}/Mods/Configs/{}.json",
+        &PARAMETERS.apk_id,
+        id
+    );
+    
+    let path = Path::new(&config_path);
+    if path.exists() {
+        debug!("Deleting mod config at {path:?}");
+        std::fs::remove_file(path).context("Deleting mod config file")?;
+    }
+    
+    Ok(())
+}
+
     /// Attempts to load a new QMOD from a stream.
     /// This will load the mod as a ZIP and validate its manifest.
     ///

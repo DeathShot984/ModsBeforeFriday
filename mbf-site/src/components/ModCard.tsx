@@ -1,6 +1,7 @@
 import '../css/ModCard.css';
 import { Mod, trimGameVersion } from '../Models'
 import { Slider } from './Slider';
+import Reset from '../icons/reset.svg';
 import TrashCan from '../icons/trash.svg';
 import Code from '../icons/code.svg';
 import { YesNoModal } from './Modal';
@@ -11,6 +12,7 @@ interface ModCardProps {
     gameVersion: string,
     onEnabledChanged: (enabled: boolean) => void,
     onRemoved: () => void
+    onReset: () => void
     pendingChange?: boolean
 }
 
@@ -35,6 +37,7 @@ function CoreModWarning(props: { mod: Mod }) {
 }
 
 export function ModCard(props: ModCardProps) {
+    const [requestReset, setRequestReset] = useState(false);
     const [requestRemove, setRequestRemove] = useState(false);
     const [requestDisable, setRequestDisable] = useState(false);
     const [wrongGameVersion, setWrongGameVersion] = useState(false);
@@ -55,6 +58,13 @@ export function ModCard(props: ModCardProps) {
         <p className='descriptionText'>{props.mod.description}</p>
 
         <div className='modControls'>
+            {!props.mod.is_core &&}
+
+            <div id="resetMod" onClick={() => setRequestReset(true)}>
+                <img src={Reset} alt="Reset mod icon" /> 
+            </div>
+           
+
             <div id="removeMod" onClick={() => setRequestRemove(true)}>
                 <img src={TrashCan} alt="Remove mod icon" />
             </div>
@@ -87,6 +97,17 @@ export function ModCard(props: ModCardProps) {
 
             <p>Are you sure that you want to remove {props.mod.name} v{props.mod.version}?</p>
         </YesNoModal>
+
+ ,       <YesNoModal title="Reset mod"
+            onYes={() => {
+                setRequestReset(false);
+                props.onReset();
+            }}
+            onNo={() => setRequestReset(false)}
+            isVisible={requestReset}>
+            <p>Are you sure that you want to reset this mod? Doing so will restore it to its default settings.{props.mod.name} v{props.mod.version}?</p>
+        </YesNoModal>
+
         <YesNoModal title="Disable core mod"
             onYes={() => {
                 setRequestDisable(false);
