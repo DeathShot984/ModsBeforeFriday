@@ -58,11 +58,11 @@ export function ModCard(props: ModCardProps) {
         <p className='descriptionText'>{props.mod.description}</p>
 
         <div className='modControls'>
-            {!props.mod.is_core &&}
-
-            <div id="resetMod" onClick={() => setRequestReset(true)}>
-                <img src={Reset} alt="Reset mod icon" /> 
-            </div>
+           {!props.mod.is_core && (
+               <div id="resetMod" onClick={() => setRequestReset(true)}>
+                  <img src={Reset} alt="Reset mod icon" />
+                     </div>
+                      )}
            
 
             <div id="removeMod" onClick={() => setRequestRemove(true)}>
