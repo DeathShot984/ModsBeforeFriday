@@ -71,7 +71,11 @@ pub enum RequestEnum {
     // TODO: Make these lists to allow importing multiple mods at once?
     /// Removes the mod with the given ID, which will uninstall dependant mods.
     /// Returns a Mods message containing the mods now installed.
-    RemoveMod {
+       RemoveMod {
+        id: String,
+    },
+    /// Resets the mod with the given ID to its default state.
+    ResetMod {
         id: String,
     },
     /// Imports a mod or file copy from the given path on the quest.
