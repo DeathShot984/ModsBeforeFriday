@@ -1,11 +1,7 @@
 name: Build MBF Agent
 
 on:
-  push:
-    branches: [ main, master ]
-    paths:
-      - 'mbf-agent/**'
-  workflow_dispatch:  # allows manual trigger from GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
@@ -20,31 +16,39 @@ jobs:
         with:
           targets: aarch64-linux-android
 
+      - name: Setup Java (required for Android SDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
       - name: Install Android NDK
         uses: android-actions/setup-android@v3
         with:
-          packages: 'ndk;27.0.12077973'
+          packages: 'ndk;25.2.9519653'
 
       - name: Configure NDK linker
         run: |
+          NDK_BIN="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin"
+          echo "NDK bin path: $NDK_BIN"
+          ls "$NDK_BIN" | grep aarch64
           mkdir -p .cargo
-          echo '[target.aarch64-linux-android]' >> .cargo/config.toml
-          echo 'linker = "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin/aarch64-linux-android21-clang"' >> .cargo/config.toml
+          cat > .cargo/config.toml << EOF
+          [target.aarch64-linux-android]
+          linker = "$NDK_BIN/aarch64-linux-android21-clang"
+          ar = "$NDK_BIN/llvm-ar"
+          EOF
+          echo "Contents of .cargo/config.toml:"
+          cat .cargo/config.toml
+
+      - name: Add NDK to PATH
+        run: echo "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/linux-x86_64/bin" >> $GITHUB_PATH
 
       - name: Build agent
-        run: |
-          cargo build \
-            --manifest-path mbf-agent/Cargo.toml \
-            --target aarch64-linux-android
+        run: cargo build --manifest-path mbf-agent/Cargo.toml --target aarch64-linux-android
 
-      - name: Copy agent to output
-        run: |
-          cp target/aarch64-linux-android/debug/mbf-agent mbf-site/public/mbf-agent
-
-      - name: Commit built agent
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add mbf-site/public/mbf-agent
-          git diff --staged --quiet || git commit -m "ci: update built mbf-agent"
-          git push
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mbf-agent
+          path: target/aarch64-linux-android/debug/mbf-agent
